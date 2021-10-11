@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using InTheBodyOfADemon.Units;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -9,6 +10,12 @@ namespace InTheBodyOfADemon
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        private Unit _player;
+
+        private Camera _camera;
+        private float _cameraX;
+        private float _cameraY;
+        private float _cameraSpeed;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -19,6 +26,9 @@ namespace InTheBodyOfADemon
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            _cameraX = 300;
+            _cameraY = 300;
+            _cameraSpeed = 100f;
 
             base.Initialize();
         }
@@ -27,6 +37,8 @@ namespace InTheBodyOfADemon
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            _player = UnitCreater.Create(Content.Load<Texture2D>("knight"));
+            _camera = new Camera(GraphicsDevice.Viewport);
             // TODO: use this.Content to load your game content here
         }
 
@@ -37,6 +49,57 @@ namespace InTheBodyOfADemon
 
             // TODO: Add your update logic here
 
+            //Camera
+            var kstate = Keyboard.GetState();
+            if (kstate.IsKeyDown(Keys.W))
+                _camera.Zoom += 0.01f;
+            else if (kstate.IsKeyDown(Keys.S))
+                _camera.Zoom -= 0.01f;
+
+            if (kstate.IsKeyDown(Keys.A))
+                _camera.Rotation += 0.01f;
+            else if (kstate.IsKeyDown(Keys.D))
+                _camera.Rotation -= 0.01f;
+
+            if (kstate.IsKeyDown(Keys.Up))
+            {
+                _cameraY -= _cameraSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+            if (kstate.IsKeyDown(Keys.Down))
+            {
+                _cameraY += _cameraSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+ 
+            if (kstate.IsKeyDown(Keys.Left))
+            {
+                _cameraX -= _cameraSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+            if (kstate.IsKeyDown(Keys.Right))
+            {
+                _cameraX += _cameraSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+
+            ///Player
+            if (kstate.IsKeyDown(Keys.Left))
+            {
+                _player.MoveLeft(gameTime);
+            }
+            else if (kstate.IsKeyDown(Keys.Right))
+            {
+                _player.MoveRight(gameTime);
+            }
+            else if (kstate.IsKeyDown(Keys.C))
+            {
+                _player.Attack(gameTime);
+            }
+            else
+            {
+                _player.Stop(gameTime);
+            }
+
+            _player.Update(gameTime);
+            _camera.Update(new Vector2(_cameraX, _cameraY));
+
             base.Update(gameTime);
         }
 
@@ -45,6 +108,15 @@ namespace InTheBodyOfADemon
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            _spriteBatch.Begin(SpriteSortMode.Deferred,
+                BlendState.AlphaBlend,
+                null, null, null, null,
+                _camera.Transform
+            );
+
+            _player.Draw(_spriteBatch);
+
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
