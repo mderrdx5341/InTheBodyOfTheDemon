@@ -25,7 +25,7 @@ namespace InTheBodyOfADemon.Units
 
             sprites.Add(UnitState.RUN, new UnitSprite(10)
             {
-                TopOffset = 235,
+                TopOffset = 110,
                 Width = 130,
                 Height = 110,
                 AmountFrames = 5,

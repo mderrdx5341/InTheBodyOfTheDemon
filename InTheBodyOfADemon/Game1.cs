@@ -1,4 +1,5 @@
-﻿using InTheBodyOfADemon.Units;
+﻿using InTheBodyOfADemon.Maps;
+using InTheBodyOfADemon.Units;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -11,6 +12,7 @@ namespace InTheBodyOfADemon
         private SpriteBatch _spriteBatch;
 
         private Unit _player;
+        private Map _map;
 
         private Camera _camera;
         private float _cameraX;
@@ -36,7 +38,7 @@ namespace InTheBodyOfADemon
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            _map = new Map(Content.Load<Texture2D>("map"));
             _player = UnitCreater.Create(Content.Load<Texture2D>("knight"));
             _camera = new Camera(GraphicsDevice.Viewport);
             // TODO: use this.Content to load your game content here
@@ -113,7 +115,10 @@ namespace InTheBodyOfADemon
                 null, null, null, null,
                 _camera.Transform
             );
-
+            foreach (IBox box in _map.GetBlocks())
+            {
+                box.Draw(_spriteBatch);
+            }
             _player.Draw(_spriteBatch);
 
             _spriteBatch.End();
