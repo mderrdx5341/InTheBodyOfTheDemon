@@ -25,6 +25,10 @@ namespace InTheBodyOfADemon.Units
                 _unit.Jump(gameTime);
             }
 
+            if (kState.IsKeyDown(Keys.V) && _oldKBState.IsKeyUp(Keys.V))
+            {
+                _unit.Magick(gameTime);
+            }
 
             if (kState.IsKeyDown(Keys.Left))
             {
@@ -68,6 +72,10 @@ namespace InTheBodyOfADemon.Units
                 if (gamePad.IsButtonDown(Buttons.X) && _oldGPState.IsButtonUp(Buttons.X))
                 {
                     _unit.Attack(gameTime);
+                }
+                if (gamePad.IsButtonDown(Buttons.Y) && _oldGPState.IsButtonUp(Buttons.Y))
+                {
+                    _unit.Magick(gameTime);
                 }
                 _oldGPState = gamePad;
             }

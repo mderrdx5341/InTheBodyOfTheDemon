@@ -1,8 +1,10 @@
-﻿using InTheBodyOfADemon.Maps;
+﻿using InTheBodyOfADemon.Magicks;
+using InTheBodyOfADemon.Maps;
 using InTheBodyOfADemon.Units;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace InTheBodyOfADemon
 {
@@ -10,6 +12,8 @@ namespace InTheBodyOfADemon
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+
+        private List<IDrawing> _drawingObject = new List<IDrawing>();
 
         private Unit _player;
         private GameMap _map;
@@ -45,7 +49,7 @@ namespace InTheBodyOfADemon
             _font = Content.Load<SpriteFont>("Font");
             Debug.Load(Content.Load<SpriteFont>("Font"));
 
-            _map = new GameMap(Content.Load<Texture2D>("map"));
+            _map = new GameMap(Content.Load<Texture2D>("map"), _font);
 
 
             _player = UnitCreater.Create(Content.Load<Texture2D>("knight"), _map);
@@ -101,6 +105,24 @@ namespace InTheBodyOfADemon
                 gameTime
             );
 
+            /**/
+            Queue<Bullet> magicksObjects = _player.GetCreatedObject();
+            int co = magicksObjects.Count;
+
+            for (int i = 0; i < co; i++)
+            {
+                Bullet b;
+                magicksObjects.TryDequeue(out b);
+                _drawingObject.Add(b);
+            }
+
+            foreach (IDrawing ob in _drawingObject)
+            {
+                ob.Update(gameTime);
+            }
+            /**/
+
+
             _cameraX = _player.RPosition.X;
             _cameraY = _player.RPosition.Y;
             _camera.Update(new Vector2(_cameraX, _cameraY));
@@ -124,12 +146,15 @@ namespace InTheBodyOfADemon
                 null, null, null, null,
                 _camera.Transform
             );
-            foreach (IBox box in _map.GetBlocks())
-            {
-                box.Draw(_spriteBatch, _font);
-            }
+
+            _map.Draw(_spriteBatch, GraphicsDevice);
 
             _player.Draw(_spriteBatch);
+
+            foreach (IDrawing ob in _drawingObject)
+            {
+                ob.Draw(_spriteBatch, GraphicsDevice);
+            }
 
             Debug.Draw(_spriteBatch, GraphicsDevice);
             _spriteBatch.End();

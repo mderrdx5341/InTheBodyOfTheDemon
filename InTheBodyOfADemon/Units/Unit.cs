@@ -1,4 +1,5 @@
-﻿using InTheBodyOfADemon.Maps;
+﻿using InTheBodyOfADemon.Magicks;
+using InTheBodyOfADemon.Maps;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -16,6 +17,7 @@ namespace InTheBodyOfADemon.Units
         private Rectangle _rPosition;
         private UnitMoverPosition _unitMoverPosition;
         private UnitCollision _unitCollision;
+        private Queue<Bullet> _createdObject = new Queue<Bullet>();
         public Rectangle RPosition
         {
             get
@@ -33,6 +35,9 @@ namespace InTheBodyOfADemon.Units
 
         private float _amountJumpSecond = 0;
         private float _jumpSeconds = 0.3f;
+
+        private float _amountMagickSecond = 0;
+        private float _magickSeconds = 0.2f;
 
         public StatusUpDown Status { get; set; }
 
@@ -53,6 +58,10 @@ namespace InTheBodyOfADemon.Units
             _unitCollision.AddCollisionObject(boxs);
         }
 
+        public Queue<Bullet> GetCreatedObject()
+        {
+            return _createdObject;
+        }
         private void PositionRect()
         {
             RPosition = new Rectangle(
@@ -131,6 +140,26 @@ namespace InTheBodyOfADemon.Units
             {
                 _state = UnitState.ATTACK;
                 _amountAttackSecond += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+        }
+        public void Magick(GameTime gameTime)
+        {
+            if (_amountMagickSecond == 0)
+            {
+                _amountAttackSecond += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                Bullet bullet = new Bullet(
+                    new Rectangle(RPosition.X + 20, RPosition.Y + 30, 10, 10),
+                    _route
+                );
+                _createdObject.Enqueue(bullet);
+            }
+            else if (_amountMagickSecond < _jumpSeconds)
+            {
+                _amountAttackSecond += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+            else if (_amountMagickSecond > _jumpSeconds)
+            {
+                _amountAttackSecond = 0;
             }
         }
         public void Jump(GameTime gameTime)

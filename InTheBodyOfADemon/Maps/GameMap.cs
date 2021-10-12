@@ -8,11 +8,15 @@ namespace InTheBodyOfADemon.Maps
 {
     class GameMap
     {
+        protected SpriteFont _font;
         protected int[,] _map;
         protected Texture2D _texture;
         protected List<IBox> boxs = new List<IBox>();
-        public GameMap(Texture2D texture)
+        protected int _width = 0;
+        protected int _height = 0;
+        public GameMap(Texture2D texture, SpriteFont font)
         {
+            _font = font;
             _texture = texture;
             _map = new int[,]
                 {{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1},
@@ -37,6 +41,9 @@ namespace InTheBodyOfADemon.Maps
         {
             int x = 0;
             int y = 0;
+
+            _width = _map.GetLength(1) * 78;
+            _height = _map.GetLength(0) * 78;
 
             for (int i = 0; i < _map.GetLength(0); i++)
             {
@@ -68,6 +75,19 @@ namespace InTheBodyOfADemon.Maps
                 }
                 x = 0;
                 y += 78;
+            }
+        }
+
+        public void Draw(SpriteBatch spriteBatch, GraphicsDevice gd)
+        {
+/*            Texture2D pixel = new Texture2D(gd, 1, 1);
+            pixel.SetData(new[] { Color.White });
+
+            spriteBatch.Draw(pixel, new Rectangle(0,0,_width, _height), Color.LightGreen);*/
+
+            foreach (IBox box in boxs)
+            {
+                box.Draw(spriteBatch, _font);
             }
         }
     }

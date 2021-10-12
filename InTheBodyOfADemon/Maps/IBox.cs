@@ -10,6 +10,5 @@ namespace InTheBodyOfADemon.Maps
     {
         public Rectangle Position { get; set; }
         public void Draw(SpriteBatch spriteBatch, SpriteFont font);
-
     }
 }
