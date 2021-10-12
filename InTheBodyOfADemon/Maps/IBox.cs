@@ -6,9 +6,8 @@ using System.Text;
 
 namespace InTheBodyOfADemon.Maps
 {
-    interface IBox
+    interface IBox: ICollisioning
     {
-        public Rectangle Position { get; set; }
         public void Draw(SpriteBatch spriteBatch, SpriteFont font);
     }
 }

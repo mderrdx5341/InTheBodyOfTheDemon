@@ -51,10 +51,10 @@ namespace InTheBodyOfADemon.Units
             });
 
             Unit unit = new Unit(
-                new Vector2(300, 0),
+                new Rectangle(1820, 600, 60, 78),
                 sprites
             );
-            unit.AddCollisionObject(map.GetBlocks());
+            unit.AddCollisionObject(map.GetBlocks().ConvertAll(b => (ICollisioning)b));
             return unit;
         }
     }

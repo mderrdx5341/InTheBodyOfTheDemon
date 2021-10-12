@@ -1,5 +1,6 @@
 ﻿using InTheBodyOfADemon.Magicks;
 using InTheBodyOfADemon.Maps;
+using InTheBodyOfADemon.NPCs;
 using InTheBodyOfADemon.Units;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,6 +19,9 @@ namespace InTheBodyOfADemon
         private Unit _player;
         private GameMap _map;
         private UnitControll _unitControll;
+
+        private Door _door;
+        private UnitCollision _doorColl;
 
         private Camera _camera;
         private float _cameraX;
@@ -56,6 +60,21 @@ namespace InTheBodyOfADemon
             _unitControll = new UnitControll(
                 _player
             );
+
+            _door = new Door();
+            _door.Load(Content.Load<Texture2D>("door"));
+
+            _doorColl = new UnitCollision();
+            _doorColl.AddCollisionObject(new List<ICollisioning>() { _player });
+
+            First npc = NPCCreateor.CreateFirst(new Rectangle(800, 500, 60, 80));
+            npc.AddCollisionObject(_map.GetBlocks().ConvertAll(b => (ICollisioning) b));
+
+            First npc2 = NPCCreateor.CreateFirst(new Rectangle(1300, 500,60, 80));
+            npc2.AddCollisionObject(_map.GetBlocks().ConvertAll(b => (ICollisioning) b));
+
+            ObjectManager.AddNPC(npc);
+            ObjectManager.AddNPC(npc2);
 
             _camera = new Camera(GraphicsDevice.Viewport);
             // TODO: use this.Content to load your game content here
@@ -98,6 +117,23 @@ namespace InTheBodyOfADemon
                 _cameraX += _cameraSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
 
+            ///Door
+/*            if (kstate.IsKeyDown(Keys.Q))
+            {
+                _door.StateToggle(gameTime);
+            }
+            _door.Update(gameTime);*/
+            if(UnitCollision.Collision(_door.Position, _player.Position))
+            {
+                _door.Animation(gameTime);
+            } else
+            {
+                _door.ReverAnimation(gameTime);
+            }
+            //_door.Update(gameTime);
+
+            ObjectManager.UpdateNPC(gameTime);
+
             ///Player
             _unitControll.Update(
                 Keyboard.GetState(),
@@ -123,8 +159,8 @@ namespace InTheBodyOfADemon
             /**/
 
 
-            _cameraX = _player.RPosition.X;
-            _cameraY = _player.RPosition.Y;
+            _cameraX = _player.Position.X;
+            _cameraY = _player.Position.Y;
             _camera.Update(new Vector2(_cameraX, _cameraY));
             //camera.Update(new Vector2(player.Position.X, player.Position.Y));
 
@@ -149,7 +185,11 @@ namespace InTheBodyOfADemon
 
             _map.Draw(_spriteBatch, GraphicsDevice);
 
-            _player.Draw(_spriteBatch);
+            _door.Draw(_spriteBatch, GraphicsDevice, _font);
+
+            ObjectManager.DrawNPC(_spriteBatch, GraphicsDevice);
+
+            _player.Draw(_spriteBatch, GraphicsDevice);
 
             foreach (IDrawing ob in _drawingObject)
             {

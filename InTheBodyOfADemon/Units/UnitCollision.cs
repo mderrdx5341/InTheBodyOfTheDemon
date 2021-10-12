@@ -8,12 +8,11 @@ namespace InTheBodyOfADemon.Units
 {
     class UnitCollision
     {
-        private List<IBox> _boxs;
+        private List<ICollisioning> _boxs;
         public UnitCollision()
         {
         }
-
-        public void AddCollisionObject(List<IBox> boxs)
+        public void AddCollisionObject(List<ICollisioning> boxs)
         {
             _boxs = boxs;
         }
@@ -59,13 +58,11 @@ namespace InTheBodyOfADemon.Units
 
             unitPosition.X += 4;
             unitPosition.Width -= 8;
-
             foreach (IBox box in _boxs)
             {
 
                 if ((unitPosition.Y + unitPosition.Height - 20) <= box.Position.Y)
                 {
-
                     if (
                         unitPosition.X >= box.Position.X && unitPosition.X <= (box.Position.X + box.Position.Width) ||
                          (unitPosition.X + unitPosition.Width) >= box.Position.X && (unitPosition.X + unitPosition.Width) <= (box.Position.X + box.Position.Width)
@@ -145,7 +142,7 @@ namespace InTheBodyOfADemon.Units
             return false;
         }
 
-        public bool CollisionX(Rectangle obj1, Rectangle obj2)
+        public static bool CollisionX(Rectangle obj1, Rectangle obj2)
         {
             if ((obj1.X + obj1.Width >= obj2.X) && (obj1.X <= obj2.X + obj2.Width))
             {
@@ -153,13 +150,25 @@ namespace InTheBodyOfADemon.Units
             }
             return false;
         }
-        public bool CollisionY(Rectangle obj1, Rectangle obj2)
+        public static bool CollisionY(Rectangle obj1, Rectangle obj2)
         {
             if ((obj1.Y + obj1.Height >= obj2.Y) && (obj1.Y <= obj2.Y + obj2.Height))
             {
                 return true;
             }
             return false;
+        }
+
+        public static bool Collision(Rectangle obj1, Rectangle obj2)
+        {
+            if (CollisionX(obj1, obj2) && CollisionY(obj1, obj2))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
