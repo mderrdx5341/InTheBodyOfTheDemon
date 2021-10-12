@@ -9,7 +9,7 @@ namespace InTheBodyOfADemon.Maps
     interface IBox
     {
         public Rectangle Position { get; set; }
-        public void Draw(SpriteBatch spriteBatch);
+        public void Draw(SpriteBatch spriteBatch, SpriteFont font);
 
     }
 }

@@ -12,12 +12,15 @@ namespace InTheBodyOfADemon
         private SpriteBatch _spriteBatch;
 
         private Unit _player;
-        private Map _map;
+        private GameMap _map;
+        private UnitControll _unitControll;
 
         private Camera _camera;
         private float _cameraX;
         private float _cameraY;
         private float _cameraSpeed;
+
+        private SpriteFont _font;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -38,8 +41,18 @@ namespace InTheBodyOfADemon
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _map = new Map(Content.Load<Texture2D>("map"));
-            _player = UnitCreater.Create(Content.Load<Texture2D>("knight"));
+
+            _font = Content.Load<SpriteFont>("Font");
+            Debug.Load(Content.Load<SpriteFont>("Font"));
+
+            _map = new GameMap(Content.Load<Texture2D>("map"));
+
+
+            _player = UnitCreater.Create(Content.Load<Texture2D>("knight"), _map);
+            _unitControll = new UnitControll(
+                _player
+            );
+
             _camera = new Camera(GraphicsDevice.Viewport);
             // TODO: use this.Content to load your game content here
         }
@@ -82,25 +95,21 @@ namespace InTheBodyOfADemon
             }
 
             ///Player
-            if (kstate.IsKeyDown(Keys.Left))
-            {
-                _player.MoveLeft(gameTime);
-            }
-            else if (kstate.IsKeyDown(Keys.Right))
-            {
-                _player.MoveRight(gameTime);
-            }
-            else if (kstate.IsKeyDown(Keys.C))
-            {
-                _player.Attack(gameTime);
-            }
-            else
-            {
-                _player.Stop(gameTime);
-            }
+            _unitControll.Update(
+                Keyboard.GetState(),
+                GamePad.GetState(PlayerIndex.One),
+                gameTime
+            );
 
-            _player.Update(gameTime);
+            _cameraX = _player.RPosition.X;
+            _cameraY = _player.RPosition.Y;
             _camera.Update(new Vector2(_cameraX, _cameraY));
+            //camera.Update(new Vector2(player.Position.X, player.Position.Y));
+
+            Debug.Position = new Vector2(
+                _cameraX,
+                _cameraY
+            );
 
             base.Update(gameTime);
         }
@@ -117,10 +126,12 @@ namespace InTheBodyOfADemon
             );
             foreach (IBox box in _map.GetBlocks())
             {
-                box.Draw(_spriteBatch);
+                box.Draw(_spriteBatch, _font);
             }
+
             _player.Draw(_spriteBatch);
 
+            Debug.Draw(_spriteBatch, GraphicsDevice);
             _spriteBatch.End();
 
             base.Draw(gameTime);

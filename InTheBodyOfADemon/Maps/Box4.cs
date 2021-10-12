@@ -6,12 +6,12 @@ using System.Text;
 
 namespace InTheBodyOfADemon.Maps
 {
-    class Box3 : IBox
+    class Box4 : IBox
     {
         Texture2D Texture;
         public Rectangle Position { get; set; }
         public bool IsDebug { get; set; }
-        public Box3(Texture2D texture, Rectangle rect)
+        public Box4(Texture2D texture, Rectangle rect)
         {
             IsDebug = false;
             this.Texture = texture;
@@ -21,9 +21,9 @@ namespace InTheBodyOfADemon.Maps
         {
             return new Rectangle(
                 //Смещение в файле
-                234, 103,
+                746, 66,
                 //Ширина и высота
-                77, 77
+                70, 26
             );
         }
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)

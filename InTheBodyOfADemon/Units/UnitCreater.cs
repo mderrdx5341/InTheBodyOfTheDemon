@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using InTheBodyOfADemon.Maps;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,20 @@ namespace InTheBodyOfADemon.Units
 {
     class UnitCreater
     {
-        public static Unit Create(Texture2D texture)
+        public static Unit Create(Texture2D texture, GameMap map)
         {
             Dictionary<UnitState, IUnitSprite> sprites = new Dictionary<UnitState, IUnitSprite>();
 
-            sprites.Add(UnitState.IDLE, new UnitSprite(10)
+            sprites.Add(UnitState.IDLE, new UnitSprite(6)
+            {
+                TopOffset = 0,
+                Width = 130,
+                Height = 115,
+                AmountFrames = 5,
+                Texture = texture
+            });
+
+            sprites.Add(UnitState.DOWN, new UnitSprite(10)
             {
                 TopOffset = 0,
                 Width = 130,
@@ -31,7 +41,7 @@ namespace InTheBodyOfADemon.Units
                 AmountFrames = 5,
                 Texture = texture
             });
-            sprites.Add(UnitState.ATTACK, new UnitSprite(10)
+            sprites.Add(UnitState.ATTACK, new UnitSprite(14)
             {
                 TopOffset = 337,
                 Width = 130,
@@ -40,7 +50,12 @@ namespace InTheBodyOfADemon.Units
                 Texture = texture
             });
 
-            return new Unit(new Vector2(0, 0), sprites);
+            Unit unit = new Unit(
+                new Vector2(300, 0),
+                sprites
+            );
+            unit.AddCollisionObject(map.GetBlocks());
+            return unit;
         }
     }
 }
